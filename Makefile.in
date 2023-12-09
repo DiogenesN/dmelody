@@ -1,0 +1,56 @@
+CC = gcc
+CFLAGS = -Wall -flto -Wextra -Wpedantic -march=native -funroll-loops -export-dynamic -fomit-frame-pointer
+LDFLAGS += $(shell pkg-config --libs gtk4 glib-2.0 gio-2.0 gio-unix-2.0)
+CFLAGS += $(shell pkg-config --cflags gtk4 glib-2.0 gio-2.0 gio-unix-2.0)
+SRCFILES = src/externvars.c src/sendcmdtompv.c src/getintvaluefromjson.c src/getfilenamecontainingsubstr.c src/populateallstrings.c src/getnumberoflines.c src/outputtochar.c src/charrarrfromstrliteral.c src/getstrsfromsubstrswritetoconf.c src/replacenthline.c src/getvaluefromconf.c src/dmelody.c
+OBJFILES = $(patsubst src/%.c, %.o, $(SRCFILES))
+CFLAGS += -Isrc/
+
+TARGET = dmelody
+PREFIX = /usr/local
+BINDIR = $(PREFIX)/bin
+
+SHARE_DIR = $(PREFIX)/share
+ICON_DIR = $(SHARE_DIR)/icons/hicolor/96x96/apps
+TARGET2 = usr/local/share/dmelody
+TARGET3 = usr/local/share/icons/hicolor/96x96/apps/dmelody.png
+TARGET4 = usr/local/share/icons/hicolor/96x96/apps/dmelody-image.png
+
+# Additional paths to specific files
+SHARE_DIR = $(PREFIX)/share
+
+LOGO_PATH = $(ICON_DIR)/dmelody.png
+LOGO2_PATH = $(ICON_DIR)/dmelody-image.png
+
+all: $(TARGET)
+
+$(TARGET): $(OBJFILES)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+	@echo "\nSuccessfully built $(TARGET)!\nType 'make run' to test or 'sudo make install' to install."
+
+%.o: src/%.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+.PHONY: run
+
+run: $(TARGET)
+	./$(TARGET)
+
+install: $(TARGET)
+	install -d $(DESTDIR)$(BINDIR)
+	install -m 755 $(TARGET) $(DESTDIR)$(BINDIR)
+	install -d $(DESTDIR)$(SHARE_DIR)
+	install -d $(DESTDIR)$(ICON_DIR)
+	install -d $(TARGET2) $(DESTDIR)$(SHARE_DIR)
+	install -m 644 $(TARGET3) $(DESTDIR)$(ICON_DIR)
+	install -m 644 $(TARGET4) $(DESTDIR)$(ICON_DIR)
+
+clean:
+	rm -f $(OBJFILES) $(TARGET)
+
+uninstall:
+	rm -f $(DESTDIR)$(BINDIR)/$(TARGET)
+	rm -f $(DESTDIR)$(SHARE_DIR)/$(TARGET2)
+	rm -f $(DESTDIR)$(ICON_DIR)/$(TARGET3)
+	rm -f $(DESTDIR)$(ICON_DIR)/$(TARGET4)
+	-rmdir --ignore-fail-on-non-empty $(DESTDIR)$(SHARE_DIR)/$(TARGET2)
