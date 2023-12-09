@@ -57,6 +57,7 @@ else
 fi
 
 cp Makefile.in Makefile
+chmod -R 755 usr/local/share/dmelody/*
 
 echo "\nAll done! \n\nType 'make' to build the project."
 
