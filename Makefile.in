@@ -39,9 +39,11 @@ run: $(TARGET)
 install: $(TARGET)
 	install -d $(DESTDIR)$(BINDIR)
 	install -m 755 $(TARGET) $(DESTDIR)$(BINDIR)
-	install -d $(DESTDIR)$(SHARE_DIR)
+	install -d $(SHARE_DIR)
+	install -d $(SHARE_DIR)/dmelody
 	install -d $(DESTDIR)$(ICON_DIR)
-	install -d $(TARGET2) $(DESTDIR)$(SHARE_DIR)
+	cp -r $(TARGET2)/ $(SHARE_DIR)/
+	chmod -R 755 /$(TARGET2)/*
 	install -m 644 $(TARGET3) $(DESTDIR)$(ICON_DIR)
 	install -m 644 $(TARGET4) $(DESTDIR)$(ICON_DIR)
 
@@ -50,7 +52,6 @@ clean:
 
 uninstall:
 	rm -f $(DESTDIR)$(BINDIR)/$(TARGET)
-	rm -f $(DESTDIR)$(SHARE_DIR)/$(TARGET2)
-	rm -f $(DESTDIR)$(ICON_DIR)/$(TARGET3)
-	rm -f $(DESTDIR)$(ICON_DIR)/$(TARGET4)
-	-rmdir --ignore-fail-on-non-empty $(DESTDIR)$(SHARE_DIR)/$(TARGET2)
+	rm -f $(ICON_DIR)//dmelody.png
+	rm -f $(ICON_DIR)//dmelody-image.png
+	rm -r $(SHARE_DIR)/$(TARGET)/
